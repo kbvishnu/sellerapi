@@ -1,0 +1,365 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"mongodb.ObjectId": {
+				"type": "string",
+				"description": "A class representation of the BSON ObjectId type."
+			},
+			"Product": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"shortDescription": {
+						"type": "string"
+					},
+					"detailedDescription": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string",
+						"enum": [
+							"Painting",
+							"Sculptor",
+							"Ornament"
+						]
+					},
+					"startingPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"bidEndDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"sellerId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"shortDescription",
+					"detailedDescription",
+					"category",
+					"startingPrice",
+					"bidEndDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Seller": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"pin": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"_id": {
+						"$ref": "#/components/schemas/mongodb.ObjectId"
+					},
+					"product": {
+						"$ref": "#/components/schemas/Product"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"address",
+					"city",
+					"state",
+					"pin",
+					"phone",
+					"email",
+					"product"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Bid": {
+				"properties": {
+					"productId": {
+						"type": "string"
+					},
+					"sellerId": {
+						"type": "string"
+					},
+					"buyerId": {
+						"type": "string"
+					},
+					"buyerEmail": {
+						"type": "string"
+					},
+					"bidAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"requestedDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"buyerFullName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"productId",
+					"sellerId",
+					"buyerId",
+					"buyerEmail",
+					"bidAmount",
+					"requestedDate",
+					"buyerFullName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ProductDetail": {
+				"properties": {
+					"product": {
+						"$ref": "#/components/schemas/Product"
+					},
+					"bids": {
+						"items": {
+							"$ref": "#/components/schemas/Bid"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"product",
+					"bids"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "server",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/ping": {
+			"get": {
+				"operationId": "GetPing",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/seller/show-sellers": {
+			"get": {
+				"operationId": "GetSellers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Seller"
+									},
+									"type": "array",
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves the list  of a sellers.",
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/seller/show-sellers/{emailId}": {
+			"get": {
+				"operationId": "GetSeller",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/Seller"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves a seller by emailId.",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "emailId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/seller/show-products}": {
+			"get": {
+				"operationId": "GetProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Product"
+									},
+									"type": "array",
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"description": "List all products",
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/seller/show-bids/{{productId}}": {
+			"get": {
+				"operationId": "GetProductBids",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/ProductDetail"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"description": "List bids for a product",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/seller/delete/{{productId}}": {
+			"delete": {
+				"operationId": "DeleteProduct",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "List bids for a product",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/seller/add-product": {
+			"post": {
+				"operationId": "SaveSeller",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"description": "Saves the seller and product",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Seller"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
